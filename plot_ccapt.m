@@ -1,12 +1,19 @@
-% do the thing
-starts = [1 2; 3 4];
-goals = [10 12; 30 40];
-T = ccapt(starts, goals, 1, 1, .1);
+function plot_ccapt(T, dt)
 
-clf;
-plot(T(1,:), T(2,:), 'r', T(3,:), T(4,:), 'g'); % plot full trajectories
+n_T = size(T,1)/2;
+starts = reshape(T(:,1),2,n_T)';
+goals = reshape(T(:,end),2,n_T)';
+
+range = [min([starts; goals],[],1)-5, max([starts; goals],[],1)+5];
+figure;clf;axis([range(1) range(3) range(2) range(4)]);
 hold on;
-for i=1:size(T,2) % animate!
-    plot(T(1,i), T(2,i), 'r.', T(3,i), T(4,i), 'g.', 'markersize',20)
-    drawnow
+plot(T(1:2:end,:)', T(2:2:end,:)','b'); % plot full trajectories
+scatter(starts(:,1), starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
+scatter(goals(:,1), goals(:,2),300, 'p', 'markerfacecolor', 'b', 'markeredgecolor', 'k');
+
+step = scatter(T(1:2:end,1)', T(2:2:end,1)',200, 'o', 'markerfacecolor', 'g', 'markeredgecolor', 'none');
+
+for i = 2:size(T,2)
+    set(step,'xdata', T(1:2:end,i)', 'ydata', T(2:2:end,i)');
+    drawnow;pause(dt);
 end
