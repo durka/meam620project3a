@@ -48,6 +48,6 @@ function gamma = ccapt(starts, goals, R, vmax, dt)
 %     gamma = bsxfun(@mtimes, (1 - beta), X) + bsxfun(@mtimes, beta, (Phi*G + (eye(N*n) - Phi*Phi')*X));
     X = reshape(starts', [N*n 1]);
     G = reshape(goals(assignments,:)',  [N*n 1]);
-    gamma = bsxfun(@plus, X, bsxfun(@mtimes, (1-beta), G - X));
+    gamma = bsxfun(@plus, X, bsxfun(@mtimes, beta, G - X));
 end
 
