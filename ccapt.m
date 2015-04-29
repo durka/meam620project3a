@@ -27,7 +27,8 @@ function gamma = ccapt(starts, goals, R, vmax, dt)
     D = pdist2(starts, goals).^2;
 
     % solve assignment problem
-    assignments = lapjv(D);
+%     assignments = lapjv(D);
+    assignments = assignmentoptimal(D)';
     phi = eye(N);
     phi = phi(assignments,:);
     Phi = kron(phi, eye(n));

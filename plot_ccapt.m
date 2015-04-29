@@ -5,7 +5,7 @@ starts = reshape(T(:,1),2,n_T)';
 goals = reshape(T(:,end),2,n_T)';
 
 range = [min([starts; goals],[],1)-5, max([starts; goals],[],1)+5];
-figure;clf;axis([range(1) range(3) range(2) range(4)]);
+figure(1);clf;axis([range(1) range(3) range(2) range(4)]);
 hold on;
 plot(T(1:2:end,:)', T(2:2:end,:)','b'); % plot full trajectories
 scatter(starts(:,1), starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
