@@ -1,4 +1,4 @@
-function gamma = ccapt3D(starts, goals, R, vmax, dt)
+function [traj, vel, acc] = ccapt3D(starts, goals, R, vmax, dt)
 % starts, goals: each row is a point
     
     start_dists = pdist(starts);
@@ -40,10 +40,14 @@ function gamma = ccapt3D(starts, goals, R, vmax, dt)
                 0   0   0       6       24*tf   60*tf^2 120*tf^3 210*tf^4]\[0 0 0 0 1 0 0 0]';
                 
     beta = polyval(flipud(alphas), (0:dt:tf));
+    beta_vel = polyval(polyder(flipud(alphas)), (0:dt:tf));
+    beta_acc = polyval(polyder(polyder(flipud(alphas))), (0:dt:tf));
     
     if beta(end)~=1;beta(end+1)=1;end;
     X = reshape(starts', [N*n 1]);
     G = reshape(goals(assignments,:)',  [N*n 1]);
-    gamma = bsxfun(@plus, X, bsxfun(@mtimes, (1-beta), G - X));
+    traj = bsxfun(@plus, X, bsxfun(@mtimes, beta, G - X));
+    vel  = bsxfun(@plus, 0, bsxfun(@mtimes, beta_vel, G - X));
+    acc  = bsxfun(@plus, 0, bsxfun(@mtimes, beta_acc, G - X));
 end
 
