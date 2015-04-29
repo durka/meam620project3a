@@ -12,7 +12,8 @@ addpath('trajectories')
 % You need to implement trajhandle and controlhandle
 
 % trajectory generator
-trajhandle = @diamond;
+trajhandle = @(t, qn)ccapt_traj([],[],[],[],qn,t);
+
 
 % controller
 controlhandle = @controller;
@@ -22,7 +23,8 @@ real_time = true;
 
 % *********** YOU SHOULDN'T NEED TO CHANGE ANYTHING BELOW **********
 % number of quadrotors
-nquad = 1;
+nquad = 5;
+ccapt_traj(rand(nquad,3)*2, rand(nquad,3)*2, 0.01, 1, [], []);
 
 % max time
 time_tol = 13;%was 30
@@ -130,29 +132,29 @@ end
 % 1-3 position, 4-6 velocity, 7-10 quaternion, 11-13 angular vel
 
 
-% Plot the saved position and velocity of each robot
-for qn = 1:nquad
-    % Truncate saved variables
-    QP{qn}.TruncateHist();
-    % Plot position for each quad
-    h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : position']);
-    plot_state(h_pos{qn}, QP{qn}.state_hist(1:3,:), QP{qn}.time_hist, 'pos', 'vic');
-    plot_state(h_pos{qn}, QP{qn}.state_des_hist(1:3,:), QP{qn}.time_hist, 'pos', 'des');
-    
-    % Plot position for each quad
-    h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : angles']);
-    [e1, e2, e3] = quat2angle(mystatehist(7:10,:)');
-    plot_state(h_pos{qn}, [e1,e2,e3]', QP{qn}.time_hist, 'pos', 'vic');
-    
-    % Plot position for each quad
-    h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : angular vel']);
-    plot_state(h_pos{qn}, mystatehist(11:13,:), QP{qn}.time_hist, 'pos', 'vic');
-    
-    % Plot velocity for each quad
-    h_vel{qn} = figure('Name', ['Quad ' num2str(qn) ' : velocity']);
-    plot_state(h_vel{qn}, QP{qn}.state_hist(4:6,:), QP{qn}.time_hist, 'vel', 'vic');
-    plot_state(h_vel{qn}, QP{qn}.state_des_hist(4:6,:), QP{qn}.time_hist, 'vel', 'des');
-end
+% % Plot the saved position and velocity of each robot
+% for qn = 1:nquad
+%     % Truncate saved variables
+%     QP{qn}.TruncateHist();
+%     % Plot position for each quad
+%     h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : position']);
+%     plot_state(h_pos{qn}, QP{qn}.state_hist(1:3,:), QP{qn}.time_hist, 'pos', 'vic');
+%     plot_state(h_pos{qn}, QP{qn}.state_des_hist(1:3,:), QP{qn}.time_hist, 'pos', 'des');
+%     
+%     % Plot position for each quad
+%     h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : angles']);
+%     [e1, e2, e3] = quat2angle(mystatehist(7:10,:)');
+%     plot_state(h_pos{qn}, [e1,e2,e3]', QP{qn}.time_hist, 'pos', 'vic');
+%     
+%     % Plot position for each quad
+%     h_pos{qn} = figure('Name', ['Quad ' num2str(qn) ' : angular vel']);
+%     plot_state(h_pos{qn}, mystatehist(11:13,:), QP{qn}.time_hist, 'pos', 'vic');
+%     
+%     % Plot velocity for each quad
+%     h_vel{qn} = figure('Name', ['Quad ' num2str(qn) ' : velocity']);
+%     plot_state(h_vel{qn}, QP{qn}.state_hist(4:6,:), QP{qn}.time_hist, 'vel', 'vic');
+%     plot_state(h_vel{qn}, QP{qn}.state_des_hist(4:6,:), QP{qn}.time_hist, 'vel', 'des');
+% end
 if(~isempty(err))
     error(err);
 end
