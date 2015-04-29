@@ -6,6 +6,7 @@
 % ***************** MEAM 620 QUADROTOR SIMULATION *****************
 close all
 clear all
+clearvars;
 addpath('utils')
 addpath('trajectories')
 
@@ -23,8 +24,11 @@ real_time = true;
 
 % *********** YOU SHOULDN'T NEED TO CHANGE ANYTHING BELOW **********
 % number of quadrotors
-nquad = 5;
-ccapt_traj(rand(nquad,3)*2, rand(nquad,3)*2, 0.01, 1, [], []);
+
+nquad = 15;
+starts = rand(nquad,3)*5;
+goals = rand(nquad,3)*5;
+ccapt_traj(starts, goals, 0.35, 1, [], []);
 
 % max time
 time_tol = 13;%was 30
@@ -71,52 +75,41 @@ vel_tol   = 0.01;
 %% ************************* RUN SIMULATION *************************
 fprintf('Simulation Running....')
 % Main loop
-mystatehist = x0{1};
+mystatehist = x0;
 
 for iter = 1:max_iter
 
     timeint = time:tstep:time+cstep;
 
     tic;
+
     % Iterate over each quad
     for qn = 1:nquad
-        % Initialize quad plot
-        if iter == 1
-            QP{qn} = QuadPlot(qn, x0{qn}, 0.1, 0.04, quadcolors(qn,:), max_iter, h_3d);
-            desired_state = trajhandle(time, qn);
-            QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time);
-            h_title = title(sprintf('iteration: %d, time: %4.2f', iter, time));
-        end
 
         % Run simulation
         [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, qn, controlhandle, trajhandle, params), timeint, x{qn});
         x{qn}    = xsave(end, :)';
-        mystatehist = [mystatehist,x{qn}];
+        mystatehist{qn} = [mystatehist{qn},x{qn}];
         
         % Save to traj
         xtraj{qn}((iter-1)*nstep+1:iter*nstep,:) = xsave(1:end-1,:);
         ttraj{qn}((iter-1)*nstep+1:iter*nstep) = tsave(1:end-1);
 
-        % Update quad plot
-        desired_state = trajhandle(time + cstep, qn);
-        QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time + cstep);
-        set(h_title, 'String', sprintf('iteration: %d, time: %4.2f', iter, time + cstep))
     end
     time = time + cstep; % Update simulation time
     t = toc;
     % Check to make sure ode45 is not timing out
-    if(t> cstep*50)
+    if(t> cstep*150)
         err = 'Ode45 Unstable';
         break;
     end
 
-    % Pause to make real-time
-    if real_time && (t < cstep)
-        pause(cstep - t);
-    end
-
     % Check termination criteria
-    if terminate_check(x, time, stop, pos_tol, vel_tol, time_tol)
+    term = terminate_check(x, time, stop, pos_tol, vel_tol, time_tol);
+    if term
+        if term == 3
+            disp('Collision!');
+        end
         break
     end
 end
@@ -128,11 +121,36 @@ for qn = 1:nquad
     ttraj{qn} = ttraj{qn}(1:iter*nstep);
 end
 
+%% ************************* QUAD PLOTTING *************************
+beep;pause;
+time      = starttime; % current time
+fprintf('Plotting Quads...')
+for i = 1:iter
+    tic;
+    for qn = 1:nquad
+        % Initialize quad plot
+        if i == 1
+            QP{qn} = QuadPlot(qn, x0{qn}, 0.1, 0.04, quadcolors(qn,:), max_iter, h_3d);
+            desired_state = trajhandle(time, qn);
+            QP{qn}.UpdateQuadPlot(mystatehist{qn}(:,1), [desired_state.pos; desired_state.vel], time);
+            h_title = title(sprintf('iteration: %d, time: %4.2f', iter, time));
+        end
+        
+        desired_state = trajhandle(time + cstep, qn);
+        QP{qn}.UpdateQuadPlot(mystatehist{qn}(:,i), [desired_state.pos; desired_state.vel], time + cstep);
+        set(h_title, 'String', sprintf('iteration: %d, time: %4.2f', i, time + cstep))
+    end
+    time = time + cstep; % Update simulation time
+    t = toc;
+    if real_time && (t < cstep)
+        pause(cstep - t);
+    end
+end
+
 % COMPONENTS OF STATE
 % 1-3 position, 4-6 velocity, 7-10 quaternion, 11-13 angular vel
 
-
-% % Plot the saved position and velocity of each robot
+% Plot the saved position and velocity of each robot
 % for qn = 1:nquad
 %     % Truncate saved variables
 %     QP{qn}.TruncateHist();
