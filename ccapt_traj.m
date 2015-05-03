@@ -31,7 +31,7 @@ if ~isempty(starts)
     N = size(starts, 1);
     n = size(starts, 2);
     if size(goals, 1) ~= N
-        error('Different numbers of start and goal points!');
+        warning('Different numbers of start and goal points!');
     end
     if size(goals, 2) ~= n
         error('Different dimensions in start and goal space!');
@@ -43,11 +43,16 @@ if ~isempty(starts)
     goals(:,3) = goals(:,3)*4;
 
     % solve assignment problem
-    assignments = assignmentoptimal(D)';
+    A = assignmentoptimal(D)';
 
     % trajectories!
+    
+    X = reshape(starts', [N*n 1]);
+    goals(A~=0,:) = goals(A(A~=0),:); % reorder goals for robots who are moving
+    goals(A==0,:) = starts(A==0,:);   % non-moving robots stay at their start points
+    G = reshape(goals',  [numel(goals) 1]);
 
-    tf = sqrt(max(D(sub2ind(size(D), 1:N, assignments))))/vmax;
+    tf = sqrt(max(D(sub2ind(size(D), 1:nnz(A), A(A~=0)))))/vmax;
     alphas = [  1 0 0 0 0 0 0 0;
                 0 1 0 0 0 0 0 0;
                 0 0 2 0 0 0 0 0;
@@ -59,8 +64,6 @@ if ~isempty(starts)
     
     alphas = flipud(alphas);
     
-    X = reshape(starts', [N*n 1]);
-    G = reshape(goals(assignments,:)',  [N*n 1]);
     desired_state = [];
     return;
 end

@@ -23,10 +23,11 @@ real_time = true;
 
 % number of quadrotors
 
-nquad = 5;
+nquad = 7;
+ngoal = 5;
 starts = rand(nquad,3)*0.5;
-goals = rand(nquad,3)*1;
-ccapt_traj(starts, goals, 0.3, 1, [], []);
+goals = rand(ngoal,3)*1;
+[~, bumped_starts, bumped_goals] = ccapt_traj(starts, goals, 0.3, 1, [], []);
 
 % max time
 time_tol = 13;%was 30
@@ -103,7 +104,7 @@ for iter = 1:max_iter
     end
 
     % Check termination criteria
-    term = terminate_check(x, time, stop, pos_tol, vel_tol, time_tol);
+    [term, extra] = terminate_check(x, time, stop, pos_tol, vel_tol, time_tol);
     if term
         if term == 3
             disp('Collision!');
