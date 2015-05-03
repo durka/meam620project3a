@@ -1,11 +1,11 @@
-function desired_state = ccapt_traj(starts, goals, R, vmax, qn, t)
+function [desired_state, starts, goals] = ccapt_traj(starts, goals, R, vmax, qn, t)
 % starts, goals: each row is a point
 
 persistent X G alphas tf;
 
 if ~isempty(starts)
     starts(:,3) = starts(:,3)/4;
-    start_dists = squareform(pdist(starts))+3*R*eye(size(starts,1));
+    start_dists = squareform(pdist(starts))+5*R*eye(size(starts,1));
     if any(start_dists(:) < 2*sqrt(2)*R)
         disp('Some start points too close together! Shifting points')
         while any(start_dists(:) < 2*sqrt(2)*R)
@@ -14,10 +14,9 @@ if ~isempty(starts)
             start_dists = squareform(pdist(starts))+5*R*eye(size(starts,1));
         end
     end
-    starts(:,3) = starts(:,3)*4;
 
     goals(:,3) = goals(:,3)/4;
-    goal_dists = squareform(pdist(goals))+3*R*eye(size(goals,1));
+    goal_dists = squareform(pdist(goals))+5*R*eye(size(goals,1));
     
     if any(goal_dists(:) < 2*sqrt(2)*R)
         disp('Some goal points too close together! Shifting points')
@@ -27,7 +26,6 @@ if ~isempty(starts)
             goal_dists = squareform(pdist(goals))+5*eye(size(goals,1));
         end
     end
-    goals(:,3) = goals(:,3)*4;
 
     % sanity checks
     N = size(starts, 1);
@@ -41,6 +39,8 @@ if ~isempty(starts)
 
     % construct D
     D = pdist2(starts, goals).^2;
+    starts(:,3) = starts(:,3)*4;
+    goals(:,3) = goals(:,3)*4;
 
     % solve assignment problem
     assignments = assignmentoptimal(D)';
