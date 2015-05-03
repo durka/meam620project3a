@@ -4,30 +4,30 @@ function desired_state = ccapt_traj(starts, goals, R, vmax, qn, t)
 persistent X G alphas tf;
 
 if ~isempty(starts)
-    starts(:,3) = starts(:,3)/3;
+    starts(:,3) = starts(:,3)/4;
     start_dists = squareform(pdist(starts))+3*R*eye(size(starts,1));
-    if any(start_dists(:) < 2*R)
+    if any(start_dists(:) < 2*sqrt(2)*R)
         disp('Some start points too close together! Shifting points')
-        while any(start_dists(:) < 2*R)
-            [p1, p2] = find(start_dists < 2*R,1);
-            starts(p2,:) = starts(p1,:) + 2.1*R*(starts(p2,:) - starts(p1,:))/norm(starts(p2,:) - starts(p1,:));
-            start_dists = squareform(pdist(starts))+3*R*eye(size(starts,1));
+        while any(start_dists(:) < 2*sqrt(2)*R)
+            [p1, p2] = find(start_dists < 2*sqrt(2)*R,1);
+            starts(p2,:) = starts(p1,:) + 5*R*(starts(p2,:) - starts(p1,:))/norm(starts(p2,:) - starts(p1,:));
+            start_dists = squareform(pdist(starts))+5*R*eye(size(starts,1));
         end
     end
-    starts(:,3) = starts(:,3)*3;
+    starts(:,3) = starts(:,3)*4;
 
-    goals(:,3) = goals(:,3)/3;
+    goals(:,3) = goals(:,3)/4;
     goal_dists = squareform(pdist(goals))+3*R*eye(size(goals,1));
     
-    if any(goal_dists(:) < 2*R)
+    if any(goal_dists(:) < 2*sqrt(2)*R)
         disp('Some goal points too close together! Shifting points')
-        while any(goal_dists(:) < 2*R)
-            [p1, p2] = find(goal_dists < 2*R,1);
-            goals(p2,:) = goals(p1,:) + 2.1*R*(goals(p2,:) - goals(p1,:))/norm(goals(p2,:) - goals(p1,:));
-            goal_dists = squareform(pdist(goals))+3*R*eye(size(goals,1));
+        while any(goal_dists(:) < 2*sqrt(2)*R)
+            [p1, p2] = find(goal_dists < 2*sqrt(2)*R,1);
+            goals(p2,:) = goals(p1,:) + 5*R*(goals(p2,:) - goals(p1,:))/norm(goals(p2,:) - goals(p1,:));
+            goal_dists = squareform(pdist(goals))+5*eye(size(goals,1));
         end
     end
-    goals(:,3) = goals(:,3)*3;
+    goals(:,3) = goals(:,3)*4;
 
     % sanity checks
     N = size(starts, 1);

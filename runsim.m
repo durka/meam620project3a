@@ -5,7 +5,6 @@
 %
 % ***************** MEAM 620 QUADROTOR SIMULATION *****************
 close all
-clear all
 clearvars;
 addpath('utils')
 addpath('trajectories')
@@ -22,13 +21,12 @@ controlhandle = @controller;
 % real-time 
 real_time = true;
 
-% *********** YOU SHOULDN'T NEED TO CHANGE ANYTHING BELOW **********
 % number of quadrotors
 
-nquad = 15;
-starts = rand(nquad,3)*5;
-goals = rand(nquad,3)*5;
-ccapt_traj(starts, goals, 0.35, 1, [], []);
+nquad = 5;
+starts = rand(nquad,3)*0.5;
+goals = rand(nquad,3)*1;
+ccapt_traj(starts, goals, 0.3, 1, [], []);
 
 % max time
 time_tol = 13;%was 30
