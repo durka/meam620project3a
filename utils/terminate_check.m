@@ -1,4 +1,4 @@
-function [ terminate_cond ] = terminate_check( x, time, stop, pos_tol, vel_tol, time_tol)
+function [ terminate_cond, pos_col_check, dists ] = terminate_check( x, time, stop, pos_tol, vel_tol, time_tol)
 %TERMINATE_CHECK Check termination criteria, including position, velocity and time
 nquad = length(stop);
 
@@ -17,7 +17,7 @@ end
 % Check total simulation time
 time_check = time > time_tol;
 % Check collision criteria
-col_check = collision_check(pos_col_check, 0.3);
+[col_check, dists] = collision_check(pos_col_check, 0.3);
 
 if (pos_check && vel_check)
     terminate_cond = 1; % Robot reaches goal and stops, successful
