@@ -6,7 +6,7 @@ R = 0.5;
 vmax = 1;
 dt = 0.01;
 
-timings = zeros(size(N), n);
+timings = zeros(length(N), n);
 gamma = cell(size(N));
 starts = cell(size(N));
 goals = cell(size(N));
