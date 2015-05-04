@@ -1,4 +1,4 @@
-function gamma = ccapt(starts, goals, R, vmax, dt)
+function [gamma, starts, goals] = ccapt(starts, goals, R, vmax, dt)
 % starts, goals: each row is a point
     
     start_dists = squareform(pdist(starts))+5*R*eye(size(starts,1));
@@ -6,7 +6,7 @@ function gamma = ccapt(starts, goals, R, vmax, dt)
         disp('Some start points too close together! Shifting points')
         while any(start_dists(:) < 2*sqrt(2)*R)
             [p1, p2] = find(start_dists < 2*sqrt(2)*R,1);
-            starts(p2,:) = starts(p1,:) + 5*R*(starts(p2,:) - starts(p1,:))/norm(starts(p2,:) - starts(p1,:));
+            starts(p2,:) = starts(p1,:) + 5*R*(starts(p2,:) - starts(p1,:) + rand(size(starts(p1,:))))/norm(starts(p2,:) - starts(p1,:));
             start_dists = squareform(pdist(starts))+5*R*eye(size(starts,1));
         end
     end
@@ -16,8 +16,8 @@ function gamma = ccapt(starts, goals, R, vmax, dt)
         disp('Some goal points too close together! Shifting points')
         while any(goal_dists(:) < 2*sqrt(2)*R)
             [p1, p2] = find(goal_dists < 2*sqrt(2)*R,1);
-            goals(p2,:) = goals(p1,:) + 5*R*(goals(p2,:) - goals(p1,:))/norm(goals(p2,:) - goals(p1,:));
-            goal_dists = squareform(pdist(goals))+5*eye(size(goals,1));
+            goals(p2,:) = goals(p1,:) + 5*R*(goals(p2,:) - goals(p1,:) + rand(size(goals(p1,:))))/norm(goals(p2,:) - goals(p1,:));
+            goal_dists = squareform(pdist(goals))+5*R*eye(size(goals,1));
         end
     end
     
