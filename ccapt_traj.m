@@ -46,15 +46,13 @@ if ~isempty(starts)
     alphas = zeros(8,0);
     tf = [];
     i = 0;
+    starts(:,3) = starts(:,3)*4;
+    goals(:,3) = goals(:,3)*4;
     while size(goals,1) > 0
         i = i + 1;
 
         % construct D
-        D = pdist2(starts, goals).^2;
-        if i == 1
-            starts(:,3) = starts(:,3)*4;
-            goals(:,3) = goals(:,3)*4;
-        end
+        D = pdist2(bsxfun(@times, starts, [1 1 0.25]), bsxfun(@times, goals, [1 1 0.25])).^2;
 
         % solve assignment problem
         A = assignmentoptimal(D)';
@@ -67,11 +65,14 @@ if ~isempty(starts)
         newgoals(A==0,:) = starts(A==0,:);   % non-moving robots stay at their start points
         G{i} = reshape(newgoals',  [numel(newgoals) 1]);
         
+        D = pdist2(starts, goals).^2;
+        tf(i) = sqrt(max(D(sub2ind(size(D), 1:nnz(A), A(A~=0)))))/vmax;
+        
         % remove solved goals
         starts(A~=0,:) = goals(A(A~=0),:);
         goals(A(A~=0),:) = [];
-
-        tf(i) = sqrt(max(D(sub2ind(size(D), 1:nnz(A), A(A~=0)))))/vmax;
+        
+        
         alphas(:,i) = [  1 0 0 0 0 0 0 0;
                          0 1 0 0 0 0 0 0;
                          0 0 2 0 0 0 0 0;

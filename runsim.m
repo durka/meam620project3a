@@ -47,6 +47,7 @@ switch mode
         nquad = 4;
         ngoal = 12;
 end
+
 if ~exist('starts', 'var')
     starts = rand(nquad,3)*0.5;
 end
