@@ -20,7 +20,7 @@ rx = sin(0:pi/20:2*pi);
 ry = cos(0:pi/20:2*pi);
 
 for i = 1:length(traj.paths)
-    plot(traj.paths{i}(:,1),traj.paths{i}(:,2), 'b--');
+    plot(traj.paths{i}(:,1),traj.paths{i}(:,2), '-.');
 end
 
 scatter(traj.starts(:,1), traj.starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
