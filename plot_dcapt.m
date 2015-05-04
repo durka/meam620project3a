@@ -28,4 +28,8 @@ circR = patch(bsxfun(@plus, traj.current(:,1), traj.R*rx)', bsxfun(@plus, traj.c
     'edgecolor','none', 'facealpha', 1);
 set(circR,'FaceColor', 'flat', 'FaceVertexCData',lines(size(traj.current,1)));
 
+for i = 1:size(traj.switching,1)
+    plot(traj.current(traj.switching(i,:),1), traj.current(traj.switching(i,:),2), 'r-');
+end
+
 drawnow

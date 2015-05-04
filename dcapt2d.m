@@ -28,6 +28,7 @@ traj.paths = cell(1,N);
 for i=1:N
     traj.paths{i} = [starts(i,:); goals(i,:)];
 end
+traj.switching = [];
 
 v = (goals - starts)/tf; 
 
@@ -40,6 +41,7 @@ current = starts;
 for tc = 0:dt:(tf-dt)
     dists = squareform(pdist(current));
     % Do DCAPT
+    traj.switching = [];
     for j = 1:N
       for i = 1:N
         if i == j
@@ -60,6 +62,8 @@ for tc = 0:dt:(tf-dt)
             traj.paths{i}(end+1,:) = goals(i,:);
             traj.paths{j}(end,:) = current(j,:);
             traj.paths{j}(end+1,:) = goals(j,:);
+            
+            traj.switching(end+1,:) = [i j];
             
             fprintf('switching %d and %d \n',i,j)
           end
