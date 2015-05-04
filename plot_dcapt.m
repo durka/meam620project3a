@@ -17,6 +17,10 @@ hold on; grid on; grid minor;
 rx = sin(0:pi/20:2*pi);
 ry = cos(0:pi/20:2*pi);
 
+for i = 1:length(traj.paths)
+    plot(traj.paths{i}(:,1),traj.paths{i}(:,1), 'b--');
+end
+
 circH = patch(bsxfun(@plus, traj.current(:,1), traj.H*rx)', bsxfun(@plus, traj.current(:,2), traj.H*ry)','b',...
     'edgecolor','b', 'facecolor', 'b', 'facealpha', 0.2);
 circR = patch(bsxfun(@plus, traj.current(:,1), traj.R*rx)', bsxfun(@plus, traj.current(:,2), traj.R*ry)','r',...
