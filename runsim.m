@@ -6,6 +6,7 @@
 % ***************** MEAM 620 QUADROTOR SIMULATION *****************
 close all
 clearvars;
+clear ccapt_traj; % clear persistent vars
 addpath('utils')
 addpath('trajectories')
 
@@ -23,8 +24,21 @@ real_time = true;
 
 % number of quadrotors
 
-nquad = 7;
-ngoal = 5;
+%mode = 'EQUAL';
+%mode = 'MORE STARTS';
+mode = 'TWICE AS MANY GOALS';
+
+switch mode
+    case 'EQUAL'
+        nquad = 5;
+        ngoal = 5;
+    case 'MORE STARTS'
+        nquad = 7;
+        ngoal = 5;
+    case 'TWICE AS MANY GOALS'
+        nquad = 4;
+        ngoal = 12;
+end
 starts = rand(nquad,3)*0.5;
 goals = rand(ngoal,3)*1;
 [~, bumped_starts, bumped_goals] = ccapt_traj(starts, goals, 0.3, 1, [], []);
