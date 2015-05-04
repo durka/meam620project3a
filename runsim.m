@@ -39,6 +39,7 @@ switch mode
         nquad = 4;
         ngoal = 12;
 end
+
 starts = rand(nquad,3)*0.5;
 goals = rand(ngoal,3)*1;
 [~, bumped_starts, bumped_goals] = ccapt_traj(starts, goals, 0.3, 1, [], []);

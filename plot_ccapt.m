@@ -1,4 +1,4 @@
-function plot_ccapt(T, R, dt)
+    function plot_ccapt(T, R, dt)
 
 n_T = size(T,1)/2;
 starts = reshape(T(:,1),2,n_T)';
