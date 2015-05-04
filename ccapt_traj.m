@@ -23,7 +23,7 @@ if ~isempty(starts)
         while any(goal_dists(:) < 2*sqrt(2)*R)
             [p1, p2] = find(goal_dists < 2*sqrt(2)*R,1);
             goals(p2,:) = goals(p1,:) + 5*R*(goals(p2,:) - goals(p1,:))/norm(goals(p2,:) - goals(p1,:));
-            goal_dists = squareform(pdist(goals))+5*eye(size(goals,1));
+            goal_dists = squareform(pdist(goals))+5*R*eye(size(goals,1));
         end
     end
     
