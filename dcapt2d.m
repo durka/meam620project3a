@@ -29,7 +29,7 @@ end
 v = (goals - starts)/tf; 
 
 current = starts;
-for tc = 0:dt:tf
+for tc = 0:dt:(tf-dt)
     dists = squareform(pdist(current));
     % Do DCAPT
     for j = 1:n_bots
@@ -53,7 +53,7 @@ for tc = 0:dt:tf
         end
       end
     end
-    current = current + v.*dt;
+    current = current + v*dt;
     traj.current = current;
     plot_dcapt(traj)
 end
