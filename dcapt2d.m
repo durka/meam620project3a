@@ -29,6 +29,8 @@ for i=1:N
     traj.paths{i} = [starts(i,:); goals(i,:)];
 end
 traj.switching = zeros(0,3);
+traj.dt = dt;
+traj.t = 0;
 
 v = (goals - starts)/tf; 
 
@@ -73,6 +75,7 @@ for tc = 0:dt:(tf-dt)
     end
     current = current + v*dt;
     traj.current = current;
+    traj.t = tc;
     
     if plotting
         plot_dcapt(traj);

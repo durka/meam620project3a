@@ -7,6 +7,8 @@ function plot_dcapt(traj)
 	% current (current poisitions of robots)
 	% R (robot radius)
 	% H (Dcapt communication distance)
+
+tic;
     
 n_T = size(traj.current,1);
 
@@ -39,4 +41,8 @@ for i = 1:size(traj.switching,1)
     plot(traj.current(traj.switching(i,2:3),1), traj.current(traj.switching(i,2:3),2), 'r-');
 end
 
+xlabel('X (m)');
+ylabel('Y (m)');
+title(sprintf('%g s', traj.t));
 drawnow
+pause(traj.dt - toc);
