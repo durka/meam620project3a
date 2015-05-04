@@ -22,7 +22,7 @@ if size(goals, 1) ~= N
         goals(N+1:end,:) = [];
     else
         warning('Different numbers of start and goal points! Some robots will start out stationary.');
-        goals(end:N,:) = starts(size(goals,1):N,:);
+        goals(end+1:N,:) = starts(size(goals,1)+1:N,:);
     end
 end
 
