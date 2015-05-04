@@ -31,9 +31,10 @@
 The concurrent assignment and planning of trajectories problem, or CAPT, involves finding a method of assigning $N$ homogeneous robots to $M$ goals and generating collision-free paths in order to reach the goals. The linear assignment portion of this problem may be offloaded to the Hungarian Algorithm, which is of complexity order $\mathcal{O}(N^3)$.
 
 \subsection{C-CAPT}
-
+C-CAPT is a centralized solution to the CAPT problem, via which trajectories are minimized via a cost functional encompassing valid assignment, resource utilization (with respect to the assignment matrix), initial conditions, terminal conditions, robot capabilities (the dynamics of each robot, generally assumed to be first-order), and collision avoidance.
 
 \subsection{D-CAPT}
+
 
 
 
