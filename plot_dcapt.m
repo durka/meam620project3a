@@ -21,6 +21,9 @@ for i = 1:length(traj.paths)
     plot(traj.paths{i}(:,1),traj.paths{i}(:,2), 'b--');
 end
 
+scatter(traj.starts(:,1), traj.starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
+scatter(traj.goals(:,1), traj.goals(:,2),300, 'p', 'markerfacecolor', 'b', 'markeredgecolor', 'k');
+
 u = unique(traj.switching(:,2:3));
 v = setdiff(1:n_T, u);
 circS = patch(bsxfun(@plus, traj.current(u,1), traj.H*rx)', bsxfun(@plus, traj.current(u,2), traj.H*ry)','b',...
@@ -29,10 +32,8 @@ circS = patch(bsxfun(@plus, traj.current(u,1), traj.H*rx)', bsxfun(@plus, traj.c
 circH = patch(bsxfun(@plus, traj.current(v,1), traj.H*rx)', bsxfun(@plus, traj.current(v,2), traj.H*ry)','b',...
     'edgecolor','b', 'facecolor', 'b', 'facealpha', 0.2);
 circR = patch(bsxfun(@plus, traj.current(:,1), traj.R*rx)', bsxfun(@plus, traj.current(:,2), traj.R*ry)','r',...
-    'edgecolor','r', 'facecolor', 'r', 'facealpha', 1);
-
-scatter(traj.starts(:,1), traj.starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
-scatter(traj.goals(:,1), traj.goals(:,2),300, 'p', 'markerfacecolor', 'b', 'markeredgecolor', 'k');
+    'edgecolor','None','facealpha', 1);
+set(circR,'FaceColor', 'flat', 'FaceVertexCData',lines(n_T));
 
 for i = 1:size(traj.switching,1)
     plot(traj.current(traj.switching(i,2:3),1), traj.current(traj.switching(i,2:3),2), 'r-');
