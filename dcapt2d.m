@@ -91,6 +91,15 @@ for tc = 0:dt:(tf-dt)
         end
     end
 end
+
+if plotting
+    traj.t = tf;
+    traj.H = 0;
+    plot_dcapt(traj);
+    if ischar(plotting)
+        writeVideo(writer, getframe(gcf));
+    end
+end
  
 if ischar(plotting)
     close(writer);
