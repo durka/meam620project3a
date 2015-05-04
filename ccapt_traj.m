@@ -1,4 +1,4 @@
-function [desired_state, starts, goals] = ccapt_traj(starts, goals, R, vmax, qn, t)
+function [desired_state, bumped_starts, bumped_goals] = ccapt_traj(starts, goals, R, vmax, qn, t)
 % starts, goals: each row is a point
 
 persistent X G alphas tf;
@@ -26,6 +26,11 @@ if ~isempty(starts)
             goal_dists = squareform(pdist(goals))+5*eye(size(goals,1));
         end
     end
+    
+    bumped_starts = starts;
+    bumped_goals = goals;
+    bumped_starts(:,3) = bumped_starts(:,3)*4;
+    bumped_goals(:,3) = bumped_goals(:,3)*4;
 
     % sanity checks
     N = size(starts, 1);
@@ -37,42 +42,71 @@ if ~isempty(starts)
         error('Different dimensions in start and goal space!');
     end
 
-    % construct D
-    D = pdist2(starts, goals).^2;
-    starts(:,3) = starts(:,3)*4;
-    goals(:,3) = goals(:,3)*4;
-
-    % solve assignment problem
-    A = assignmentoptimal(D)';
-
-    % trajectories!
     
-    X = reshape(starts', [N*n 1]);
-    goals(A~=0,:) = goals(A(A~=0),:); % reorder goals for robots who are moving
-    goals(A==0,:) = starts(A==0,:);   % non-moving robots stay at their start points
-    G = reshape(goals',  [numel(goals) 1]);
+    alphas = zeros(8,0);
+    tf = [];
+    i = 0;
+    while size(goals,1) > 0
+        i = i + 1;
 
-    tf = sqrt(max(D(sub2ind(size(D), 1:nnz(A), A(A~=0)))))/vmax;
-    alphas = [  1 0 0 0 0 0 0 0;
-                0 1 0 0 0 0 0 0;
-                0 0 2 0 0 0 0 0;
-                0 0 0 6 0 0 0 0;
-                1   tf  tf^2    tf^3    tf^4    tf^5    tf^6    tf^7;
-                0   1   2*tf    3*tf^2  4*tf^3  5*tf^4  6*tf^5  7*tf^6;
-                0   0   2       6*tf    12*tf^2 20*tf^3 30*tf^4 42*tf^5;
-                0   0   0       6       24*tf   60*tf^2 120*tf^3 210*tf^4]\[0 0 0 0 1 0 0 0]';
-    
-    alphas = flipud(alphas);
+        % construct D
+        D = pdist2(starts, goals).^2;
+        if i == 1
+            starts(:,3) = starts(:,3)*4;
+            goals(:,3) = goals(:,3)*4;
+        end
+
+        % solve assignment problem
+        A = assignmentoptimal(D)';
+
+        % trajectories!
+
+        X{i} = reshape(starts', [N*n 1]);
+        newgoals = zeros(size(goals));
+        newgoals(A~=0,:) = goals(A(A~=0),:); % reorder goals for robots who are moving
+        newgoals(A==0,:) = starts(A==0,:);   % non-moving robots stay at their start points
+        G{i} = reshape(newgoals',  [numel(newgoals) 1]);
+        
+        % remove solved goals
+        starts(A~=0,:) = goals(A(A~=0),:);
+        goals(A(A~=0),:) = [];
+
+        tf(i) = sqrt(max(D(sub2ind(size(D), 1:nnz(A), A(A~=0)))))/vmax;
+        alphas(:,i) = [  1 0 0 0 0 0 0 0;
+                         0 1 0 0 0 0 0 0;
+                         0 0 2 0 0 0 0 0;
+                         0 0 0 6 0 0 0 0;
+                         1   tf(i)  tf(i)^2    tf(i)^3    tf(i)^4    tf(i)^5    tf(i)^6     tf(i)^7;
+                         0   1      2*tf(i)    3*tf(i)^2  4*tf(i)^3  5*tf(i)^4  6*tf(i)^5   7*tf(i)^6;
+                         0   0      2          6*tf(i)    12*tf(i)^2 20*tf(i)^3 30*tf(i)^4  42*tf(i)^5;
+                         0   0      0          6          24*tf(i)   60*tf(i)^2 120*tf(i)^3 210*tf(i)^4]\[0 0 0 0 1 0 0 0]';
+        if i > 1
+            tf(i) = tf(i) + tf(i-1);
+        end
+
+        alphas(:,i) = flipud(alphas(:,i));
+        
+    end
     
     desired_state = [];
     return;
 end
-if t < tf
-    pos = X((1:3) + (qn-1)*3) + polyval(alphas, t)*(G((1:3) + (qn-1)*3)-X((1:3) + (qn-1)*3));
-    vel = polyval(polyder(alphas), t)*(G((1:3) + (qn-1)*3)-X((1:3) + (qn-1)*3));
-    acc = polyval(polyder(polyder(alphas)), t)*(G((1:3) + (qn-1)*3)-X((1:3) + (qn-1)*3));
+
+if t < tf(end)
+    for i=1:length(tf)
+        if t < tf(i)
+            tt = t;
+            if i > 1
+                tt = t - tf(i-1);
+            end
+            pos = X{i}((1:3) + (qn-1)*3) + polyval(alphas(:,i), tt)*(G{i}((1:3) + (qn-1)*3)-X{i}((1:3) + (qn-1)*3));
+            vel = polyval(polyder(alphas(:,i)), tt)*(G{i}((1:3) + (qn-1)*3)-X{i}((1:3) + (qn-1)*3));
+            acc = polyval(polyder(polyder(alphas(:,i))), tt)*(G{i}((1:3) + (qn-1)*3)-X{i}((1:3) + (qn-1)*3));
+            break;
+        end
+    end
 else
-    pos = G((1:3) + (qn-1)*3);
+    pos = G{end}((1:3) + (qn-1)*3);
     vel = [0;0;0];
     acc = [0;0;0]; 
 end
