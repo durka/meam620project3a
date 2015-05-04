@@ -5,7 +5,6 @@
 %
 % ***************** MEAM 620 QUADROTOR SIMULATION *****************
 close all
-clearvars;
 clear ccapt_traj; % clear persistent vars
 addpath('utils')
 addpath('trajectories')
@@ -24,9 +23,18 @@ real_time = true;
 
 % number of quadrotors
 
-%mode = 'EQUAL';
-%mode = 'MORE STARTS';
-mode = 'TWICE AS MANY GOALS';
+if ~exist('mode', 'var')
+    %mode = 'EQUAL';
+    %mode = 'MORE STARTS';
+    mode = 'TWICE AS MANY GOALS';
+end
+
+if exist('record', 'var')
+    writer = VideoWriter(record);
+end
+if exist('writer', 'var')
+    open(writer);
+end
 
 switch mode
     case 'EQUAL'
@@ -39,8 +47,12 @@ switch mode
         nquad = 4;
         ngoal = 12;
 end
-starts = rand(nquad,3)*0.5;
-goals = rand(ngoal,3)*1;
+if ~exist('starts', 'var')
+    starts = rand(nquad,3)*0.5;
+end
+if ~exist('goals', 'var')
+    goals = rand(ngoal,3)*1;
+end
 [~, bumped_starts, bumped_goals] = ccapt_traj(starts, goals, 0.3, 1, [], []);
 
 % max time
@@ -152,12 +164,19 @@ for i = 1:iter
         desired_state = trajhandle(time + cstep, qn);
         QP{qn}.UpdateQuadPlot(mystatehist{qn}(:,i), [desired_state.pos; desired_state.vel], time + cstep);
         set(h_title, 'String', sprintf('iteration: %d, time: %4.2f', i, time + cstep))
+        if exist('writer', 'var')
+            writeVideo(writer, getframe(gcf));
+        end
     end
     time = time + cstep; % Update simulation time
     t = toc;
     if real_time && (t < cstep)
         pause(cstep - t);
     end
+end
+
+if exist('writer', 'var')
+    close(writer);
 end
 
 % COMPONENTS OF STATE
