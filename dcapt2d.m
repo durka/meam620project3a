@@ -9,21 +9,52 @@ n_bots = size(starts,1);
 
 working = true;
 
-% initialize proximity and update set
-prox_set{n_bots} = [];
 
-dists = squareform(pdist(starts));
-dists(eye(n_bots)) = max(dists(:)) + 10;
 
-for i = 1:n_bots
-    prox_set{i} = find(dists(i,:)) <= H;
+N = size(starts, 1);
+n = size(starts, 2);
+
+if size(goals, 1) ~= N
+    error('Different numbers of start and goal points!');
 end
 
-update_set = prox_set;
+if size(goals, 2) ~= n
+    error('Different dimensions in start and goal space!');
+end
 
-while working
-    
+v = (goals - starts)/tf; 
+
+current = starts;
+for tc = 0:dt:tf
+    dists = squareform(pdist(current));
     % Do DCAPT
+    for j = 1:n_bots
+      for i = 1:n_bots
+        if i == j
+          continue
+        end
+        if dists(i,j) <= H 
+          uw = dot((current(i,:) - current(j,:)),(goals(i,:) - goals(j,:)));
+          if uw < 0
+            goal1 = goals(i,:);
+            goal2 = goals(j,:);
+            goals(i,:) = goal2;
+            goals(j,:) = goal1;
+
+            v(i,:) = (goals(i,:) - current(i,:))/(tf - tc);
+            v(j,:) = (goals(j,:) - current(j,:))/(tf - tc);
+          end
+          
+        end
+      end
+    end
+    current = current + v.*dt;
+    traj.current = current;
+    plot_
+end
+ 
+ 
+      
     
     % Break when near goals
     
