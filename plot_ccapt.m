@@ -36,7 +36,10 @@ for i = 2:size(T,2)
     if exist('writer', 'var')
         writeVideo(writer, getframe(gcf));
     end
-    pause(dt - toc);
+    t = toc;
+    if t < dt
+        pause(dt - t);
+    end
 end
 
 if exist('writer', 'var')
