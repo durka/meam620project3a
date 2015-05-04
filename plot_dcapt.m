@@ -18,7 +18,7 @@ rx = sin(0:pi/20:2*pi);
 ry = cos(0:pi/20:2*pi);
 
 for i = 1:length(traj.paths)
-    plot(traj.paths{i}(:,1),traj.paths{i}(:,1), 'b--');
+    plot(traj.paths{i}(:,1),traj.paths{i}(:,2), 'b--');
 end
 
 circH = patch(bsxfun(@plus, traj.current(:,1), traj.H*rx)', bsxfun(@plus, traj.current(:,2), traj.H*ry)','b',...
