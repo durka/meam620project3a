@@ -11,12 +11,19 @@ end
 N = size(starts, 1);
 n = size(starts, 2);
 
-if size(goals, 1) ~= N
-    error('Different numbers of start and goal points!');
-end
 
 if size(goals, 2) ~= n
     error('Different dimensions in start and goal space!');
+end
+
+if size(goals, 1) ~= N
+    if size(goals, 1) > N
+        warning('Different numbers of start and goal points! Throwing away extra goals.');
+        goals(N+1:end,:) = [];
+    else
+        warning('Different numbers of start and goal points! Some robots will start out stationary.');
+        goals(end+1:N,:) = starts(size(goals,1)+1:N,:);
+    end
 end
 
 traj.starts = starts;
@@ -82,6 +89,15 @@ for tc = 0:dt:(tf-dt)
         if ischar(plotting)
             writeVideo(writer, getframe(gcf));
         end
+    end
+end
+
+if plotting
+    traj.t = tf;
+    traj.H = 0;
+    plot_dcapt(traj);
+    if ischar(plotting)
+        writeVideo(writer, getframe(gcf));
     end
 end
  
