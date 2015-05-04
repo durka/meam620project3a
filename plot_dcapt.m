@@ -25,3 +25,4 @@ circR = patch(bsxfun(@plus, traj.current(:,1), traj.R*rx)', bsxfun(@plus, traj.c
 scatter(traj.starts(:,1), traj.starts(:,2),300, 's', 'markerfacecolor', 'r', 'markeredgecolor', 'k');
 scatter(traj.goals(:,1), traj.goals(:,2),300, 'p', 'markerfacecolor', 'b', 'markeredgecolor', 'k');
 
+drawnow

@@ -1,4 +1,8 @@
-function dcapt2D(starts, goals, R, H, vmax, dt, plotting)
+function dcapt2D(starts, goals, R, H, tf, dt, plotting)
+
+close all
+
+[starts,goals] = shift_points(starts,goals,R);
 
 traj.starts = starts;
 traj.goals = goals;
@@ -43,6 +47,7 @@ for tc = 0:dt:tf
 
             v(i,:) = (goals(i,:) - current(i,:))/(tf - tc);
             v(j,:) = (goals(j,:) - current(j,:))/(tf - tc);
+            fprintf('switching %d and %d \n',i,j)
           end
           
         end
@@ -50,7 +55,7 @@ for tc = 0:dt:tf
     end
     current = current + v.*dt;
     traj.current = current;
-    plot_
+    plot_dcapt(traj)
 end
  
  
