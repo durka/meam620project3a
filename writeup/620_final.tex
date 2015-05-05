@@ -36,7 +36,7 @@ The concurrent assignment and planning of trajectories problem, or CAPT, involve
 C-CAPT is a centralized solution to the CAPT problem, via which trajectories are minimized via a cost functional encompassing valid assignment, resource utilization (with respect to the assignment matrix), initial conditions, terminal conditions, robot capabilities (the dynamics of each robot, generally assumed to be first-order), and collision avoidance. The trajectories have minimum velocity squared, which also leads to their being collision-free. 
 
 \subsection{D-CAPT}
-D-CAPT is a mainly decentralized solution to CAPT, using communications between robots in radius $h$ neighborhood of one another to coordinate local actions. [Turpin 2014] shows that this approach is successful in non-pathological examples where the number of robots is equal to the number of goals.
+D-CAPT is a mainly decentralized solution to CAPT, using communications between robots in radius $h$ neighborhood of one another to coordinate local actions.  While this approach is directed at systems without full connectedness, the D-CAPT method helps to ameliorate issues of computational expense associated with the Hungarian Algorithm on large networks, and as such is useful in improving performance in certain centralized cases as well. [Turpin 2014] shows that this approach is successful in non-pathological examples where the number of robots is equal to the number of goals.
 
 \section{Implementation and Runtimes}
 \subsection{C-CAPT (2D)}
@@ -50,5 +50,6 @@ D-CAPT is a mainly decentralized solution to CAPT, using communications between 
 %\section{Interesting Examples}
 
 \section{Further Possible Work}
+It may be possible to convert D-CAPT in particular to a coordinate-free problem, e.g. by using homological methods on the simplicial complex formed by each proximity set. By working only with the abstract combinatorial object of a simplex, computational costs could be further lowered. Additionally, since the tools of homology are best-suited for the detection of holes in a network, this approach may lead to a more efficient way of selecting agents to generate proximity sets. Since homological computations are matrix-based, this may also have benefits with respect to computational costs.
 
 \end{document}
