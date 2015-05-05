@@ -148,7 +148,7 @@ for qn = 1:nquad
 end
 
 %% ************************* QUAD PLOTTING *************************
-beep;pause;
+
 time      = starttime; % current time
 fprintf('Plotting Quads...')
 for i = 1:iter
