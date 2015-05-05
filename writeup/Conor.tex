@@ -1,1 +1,25 @@
-TEST2
+\newcommand{\twofigure}[3]{
+\begin{figure}[H]
+\caption{#1}
+\begin{minipage}[t]{0.45\linewidth}
+\center
+Initial State
+\includegraphics[width=\linewidth]{#2}
+\end{minipage}
+\begin{minipage}[t]{0.45\linewidth}
+\center
+End State
+\includegraphics[width=\linewidth]{#3}
+\end{minipage}
+\end{figure}
+}
+
+\twofigure{Example \#1 Using C-CAPT}{images/ccapt2d_cascade_start.png}{images/ccapt2d_cascade_goal.png}
+\twofigure{Example \#1 Using D-CAPT}{images/dcapt2d_cascade_start.png}{images/dcapt2d_cascade_goal.png}
+\twofigure{Example \#2 Using D-CAPT}{images/dcapt2d_circlebounce_start.png}{images/dcapt2d_circlebounce_goal.png}
+\twofigure{Example \#3 Using D-CAPT}{images/dcapt2d_doublebounce_start.png}{images/dcapt2d_doublebounce_goal.png}
+\twofigure{Example \#4 Using D-CAPT}{images/dcapt2d_pool_start.png}{images/dcapt2d_pool_goal.png}
+
+
+
+These four examples show the main drawback of D-CAPT compared to C-CAPT, which is that since points are not assigned optimally at the start, there can be extremely non-optimal paths. Other drawbacks include that the number of robots must equal the goal points (however we implemented a small extension to allow this), the inital assignment problem must be unique without a centralized controller, and that networking and goal-swapping precedence creates a leyer of complexity in robot-to-robot communication.
